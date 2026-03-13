@@ -89,36 +89,6 @@
     margin-bottom: 32px;
   }
 
-  /* ── Mode toggle ── */
-  .mode-toggle {
-    display: flex;
-    background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 4px;
-    gap: 4px;
-    margin-bottom: 28px;
-    box-shadow: var(--shadow);
-  }
-  .mode-btn {
-    flex: 1;
-    padding: 12px 16px;
-    border: none;
-    border-radius: 8px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px; font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-    color: var(--muted);
-    background: transparent;
-    display: flex; align-items: center; justify-content: center; gap: 8px;
-  }
-  .mode-btn.active {
-    background: var(--navy);
-    color: white;
-    box-shadow: 0 2px 8px rgba(26,43,74,0.25);
-  }
-  .mode-btn svg { width: 16px; height: 16px; }
 
   /* ── Card ── */
   .card {
@@ -145,23 +115,6 @@
   }
 
   /* ── Upload zone ── */
-  .upload-zone {
-    border: 2px dashed var(--border);
-    border-radius: var(--radius);
-    padding: 40px 24px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.2s;
-    background: var(--slate);
-    position: relative;
-  }
-  .upload-zone:hover, .upload-zone.drag-over {
-    border-color: var(--blue);
-    background: var(--sky);
-  }
-  .upload-zone input[type=file] {
-    position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
-  }
   .upload-icon { font-size: 36px; margin-bottom: 12px; }
   .upload-title { font-weight: 600; font-size: 15px; color: var(--navy); margin-bottom: 6px; }
   .upload-hint { font-size: 12px; color: var(--muted); }
@@ -380,13 +333,6 @@
   }
   .helper-text { font-size: 11px; color: var(--muted); margin-top: 4px; }
 
-  .ai-badge {
-    display: inline-flex; align-items: center; gap: 5px;
-    background: linear-gradient(135deg, #2563a8, #1a4a8a);
-    color: white; font-size: 10px; font-weight: 700;
-    padding: 3px 8px; border-radius: 20px;
-    letter-spacing: 0.06em; text-transform: uppercase;
-  }
 
   /* ── Sub-sections (TA, Nav) ── */
   .sub-section {
@@ -439,67 +385,8 @@
 <div class="container">
   <div class="page-title">Log an Activity</div>
   <div class="page-sub">Record every entrepreneur interaction for Business Oregon reporting. Takes 60 seconds.</div>
-
-  <!-- Mode Toggle -->
-  <div class="mode-toggle">
-    <button class="mode-btn active" id="btn-manual" onclick="setMode('manual')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-      Manual Entry
-    </button>
-    <button class="mode-btn" id="btn-screenshot" onclick="setMode('screenshot')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-      Email Screenshot
-      <span class="ai-badge">✦ AI</span>
-    </button>
-  </div>
-
-  <!-- SCREENSHOT MODE -->
-  <div id="mode-screenshot" style="display:none;">
-    <div class="card">
-      <div class="card-title">Upload Email Screenshot</div>
-      <p style="font-size:13px;color:var(--muted);margin-bottom:16px;">Screenshot an email thread with a founder or entrepreneur. AI will extract the company name, contact, what was discussed, and suggest the right activity category — then pre-fill the form for you to confirm and submit.</p>
-      <p style="font-size:12px;color:var(--muted);margin-bottom:16px;padding:10px 12px;background:var(--sky);border-radius:8px;border-left:3px solid var(--blue);">💡 <strong>Tip:</strong> The more of the email thread visible, the better. Include the subject line, sender name, and body. Works with Gmail, Outlook, Apple Mail.</p>
-
-      <div class="upload-zone" id="upload-zone">
-        <input type="file" accept="image/*" id="screenshot-input" onchange="handleFileSelect(event)">
-        <div class="upload-icon">✉️</div>
-        <div class="upload-title">Drop your email screenshot here</div>
-        <div class="upload-hint">or click to browse · PNG, JPG, HEIC supported</div>
-      </div>
-
-      <div class="preview-wrap" id="preview-wrap" style="display:none;">
-        <img id="preview-img" src="" alt="Calendar preview">
-        <button class="preview-remove" onclick="clearPreview()">✕</button>
-      </div>
-
-      <button class="btn-ai" id="extract-btn" onclick="extractFromScreenshot()" style="display:none;" disabled>
-        <span class="spinner" id="extract-spinner" style="display:none;"></span>
-        <span id="extract-label">✦ Extract Activity Details with AI</span>
-      </button>
-    </div>
-
-    <div id="extracted-results" style="display:none;">
-      <div class="card">
-        <div class="card-title">AI-Extracted Details – Review &amp; Confirm</div>
-        <p style="font-size:13px;color:var(--muted);margin-bottom:16px;">Review what AI found in your email. Confirm the interaction, then complete any missing fields before submitting.</p>
-        <div class="extracted-list" id="extracted-list"></div>
-
-        <div class="section-divider"></div>
-
-        <button class="btn-submit" onclick="useExtractedInForm()" style="margin-top:4px;">
-          Review &amp; Complete in Form →
-        </button>
-        <p style="font-size:11px;color:var(--muted);text-align:center;margin-top:10px;">
-          AI pre-fills what it found. You complete the remaining required fields and submit.
-        </p>
-      </div>
-    </div>
-  </div>
-
   <!-- MANUAL MODE -->
-  <div id="mode-manual">
-
-    <!-- CARD 1: Reporter -->
+  <!-- CARD 1: Reporter -->
     <div class="card">
       <div class="card-title">Your Info</div>
       <div class="form-grid">
@@ -722,49 +609,6 @@
 
     <button class="btn-submit" onclick="submitManual()">Log This Activity →</button>
   </div>
-
-    <!-- Activity Log -->
-  <div style="margin-top: 40px;">
-    <div class="log-header">
-      <div style="display:flex;align-items:center;gap:12px;">
-        <div style="font-family:'DM Serif Display',serif;font-size:20px;color:var(--navy);">Activity Log</div>
-        <div class="log-count" id="log-count">0 entries</div>
-      </div>
-      <div style="display:flex;gap:8px;">
-        <button class="btn-export" onclick="exportCSV()">⬇ Export CSV</button>
-        <button class="btn-export" style="background:var(--red-l);color:var(--red);border-color:var(--red);" onclick="clearLog()">✕ Clear Log</button>
-      </div>
-    </div>
-    <div class="card" style="padding:0;overflow:hidden;">
-      <div id="log-empty" class="empty-state">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-        <p>No activities logged yet.<br>Submit your first entry above.</p>
-      </div>
-      <div id="log-table-wrap" style="display:none;overflow-x:auto;">
-        <table class="log-table" id="log-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Qtr</th>
-              <th>Org</th>
-              <th>Client</th>
-              <th>Business</th>
-              <th>Region</th>
-              <th>Industry</th>
-              <th>New?</th>
-              <th>Support Type</th>
-              <th>TA Types</th>
-              <th>Hrs</th>
-              <th>Referred To</th>
-              <th>Hub?</th>
-              <th>Description</th>
-            </tr>
-          </thead>
-          <tbody id="log-body"></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -776,8 +620,6 @@ const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxpdqNnXJByBEPc
 
 // ── State ──────────────────────────────────────────────────────────────────────
 let activities = JSON.parse(localStorage.getItem('ern_activities') || '[]');
-let screenshotFile = null;
-let screenshotB64 = null;
 let extractedItems = [];
 
 const CAT_TAGS = {
@@ -792,17 +634,9 @@ const CAT_TAGS = {
 // ── Init ───────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('activity-date').value = new Date().toISOString().split('T')[0];
-  renderLog();
-  setupDragDrop();
 });
 
 // ── Mode switch ────────────────────────────────────────────────────────────────
-function setMode(mode) {
-  document.getElementById('mode-manual').style.display     = mode === 'manual'     ? 'block' : 'none';
-  document.getElementById('mode-screenshot').style.display = mode === 'screenshot' ? 'block' : 'none';
-  document.getElementById('btn-manual').classList.toggle('active',     mode === 'manual');
-  document.getElementById('btn-screenshot').classList.toggle('active', mode === 'screenshot');
-}
 
 // ── Category pills ─────────────────────────────────────────────────────────────
 function deriveQuarter(dateStr) {
@@ -852,215 +686,29 @@ function getSelectedTA() {
   return checked;
 }
 
-// ── File handling ──────────────────────────────────────────────────────────────
-function setupDragDrop() {
-  const zone = document.getElementById('upload-zone');
-  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
-  zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
-  zone.addEventListener('drop', e => {
-    e.preventDefault(); zone.classList.remove('drag-over');
-    const file = e.dataTransfer.files[0];
-    if (file && file.type.startsWith('image/')) processFile(file);
-  });
-}
-
-function handleFileSelect(e) {
-  const file = e.target.files[0];
-  if (file) processFile(file);
-}
-
-function processFile(file) {
-  screenshotFile = file;
-  const reader = new FileReader();
-  reader.onload = ev => {
-    screenshotB64 = ev.target.result.split(',')[1];
-    document.getElementById('preview-img').src = ev.target.result;
-    document.getElementById('preview-wrap').style.display = 'block';
-    document.getElementById('extract-btn').style.display = 'flex';
-    document.getElementById('extract-btn').disabled = false;
-  };
-  reader.readAsDataURL(file);
-}
-
-function clearPreview() {
-  screenshotFile = null; screenshotB64 = null;
-  document.getElementById('preview-img').src = '';
-  document.getElementById('preview-wrap').style.display = 'none';
-  document.getElementById('extract-btn').style.display = 'none';
-  document.getElementById('extracted-results').style.display = 'none';
-  document.getElementById('screenshot-input').value = '';
-}
-
-// ── AI Extraction ──────────────────────────────────────────────────────────────
-async function extractFromScreenshot() {
-  const btn = document.getElementById('extract-btn');
-  const spinner = document.getElementById('extract-spinner');
-  const label = document.getElementById('extract-label');
-
-  btn.disabled = true;
-  spinner.style.display = 'block';
-  label.textContent = 'Analyzing your calendar...';
-
-  if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes("YOUR_APPS_SCRIPT")) {
-    showToast('⚠️ Paste your Apps Script URL into the HTML file first');
-    btn.disabled = false; spinner.style.display = 'none';
-    label.textContent = '✦ Extract Activity Details with AI';
-    return;
-  }
-
-  try {
-    const response = await fetch(APPS_SCRIPT_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        action: "analyze_email_screenshot",
-        imageBase64: screenshotB64,
-        mimeType: screenshotFile.type || "image/png"
-      })
-    });
-
-    const parsed = await response.json();
-
-    if (parsed.error) throw new Error(parsed.error);
-
-    renderEmailExtracted(parsed);
-    document.getElementById('extracted-results').style.display = 'block';
-    document.getElementById('extracted-results').scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-  } catch(err) {
-    showToast('⚠️ Could not read email. Try a clearer screenshot or use manual entry.');
-    console.error(err);
-  } finally {
-    btn.disabled = false;
-    spinner.style.display = 'none';
-    label.textContent = '✦ Extract Activity Details with AI';
-  }
-}
-
-function renderEmailExtracted(data) {
-  const list = document.getElementById('extracted-list');
-  list.innerHTML = '';
-
-  // Show a summary of what AI found
-  const fields = [
-    { label: 'Client Name',    value: data.clientName,   icon: '👤' },
-    { label: 'Business Name',  value: data.companyName,  icon: '🏢' },
-    { label: 'Email',          value: data.email,        icon: '📧' },
-    { label: 'Date',           value: data.date,         icon: '📅' },
-    { label: 'Category',       value: data.category,     icon: '🏷️' },
-    { label: 'Summary',        value: data.summary,      icon: '📝' },
-    { label: 'Industry Guess', value: data.industryGuess,icon: '🏭' },
-  ].filter(f => f.value);
-
-  if (fields.length === 0) {
-    list.innerHTML = '<p style="color:var(--muted);font-size:13px;">Could not extract enough detail. Try a clearer screenshot or use manual entry.</p>';
-    return;
-  }
-
-  const summaryDiv = document.createElement('div');
-  summaryDiv.innerHTML = fields.map(f =>
-    `<div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;">
-      <span style="width:120px;font-weight:600;color:var(--muted);flex-shrink:0;">${f.icon} ${f.label}</span>
-      <span style="color:var(--text);">${f.value}</span>
-    </div>`
-  ).join('');
-  list.appendChild(summaryDiv);
-
-  // Confidence note
-  const note = document.createElement('p');
-  note.style.cssText = 'font-size:12px;color:var(--muted);margin-top:12px;padding:10px;background:var(--sky);border-radius:6px;';
-  note.innerHTML = '✦ AI pre-filled what it could find. Review below, confirm your org and name, then submit.';
-  list.appendChild(note);
-
-  // Pre-fill the manual form fields
-  if (data.clientName)   { document.getElementById('contact-name').value   = data.clientName; }
-  if (data.companyName)  { document.getElementById('company-name').value   = data.companyName; }
-  if (data.email)        { document.getElementById('contact-email').value  = data.email; }
-  if (data.date)         { document.getElementById('activity-date').value  = data.date; }
-  if (data.summary)      { document.getElementById('description').value    = '[AI] ' + data.summary; }
-
-  // Set category pill
-  if (data.category) {
-    document.querySelectorAll('.cat-pill').forEach(pill => {
-      if (pill.dataset.cat === data.category) {
-        pill.classList.add('selected');
-        // Trigger sub-sections
-        if (data.category === 'Navigation') document.getElementById('nav-sub').style.display = 'block';
-        if (data.category === 'Technical Assistance') document.getElementById('ta-sub').style.display = 'block';
-      }
-    });
-  }
-
-  // Set industry if confident
-  if (data.industryGuess) {
-    const industrySelect = document.getElementById('industry');
-    for (let opt of industrySelect.options) {
-      if (opt.value === data.industryGuess) {
-        industrySelect.value = data.industryGuess;
-        break;
-      }
-    }
-  }
-}
-
-// Keep old renderExtracted as no-op fallback
-function renderExtracted(data) { renderEmailExtracted(data); }
-
-function useExtractedInForm() {
-  // Hide extracted results, switch to manual mode with pre-filled fields
-  document.getElementById('extracted-results').style.display = 'none';
-  setMode('manual');
-  // Scroll to manual form
-  document.getElementById('mode-manual').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  showToast('✓ Form pre-filled — review and submit');
-}
-
-function toggleExtracted(i) {
-  const chk = document.getElementById(`chk-${i}`);
-  const item = document.getElementById(`ext-${i}`);
-  const checked = chk.classList.toggle('checked');
-  chk.textContent = checked ? '✓' : '';
-  item.classList.toggle('confirmed', checked);
-  item.classList.toggle('rejected', !checked);
-}
-
-// submitExtracted replaced by useExtractedInForm + submitManual flow
-
-// ── Manual submit ──────────────────────────────────────────────────────────────
+// ── Submit ──────────────────────────────────────────────────────────────────────
 function submitManual() {
   const org      = document.getElementById('org').value;
   const name     = document.getElementById('reporter-name').value.trim();
   const date     = document.getElementById('activity-date').value;
-  const co       = document.getElementById('company-name').value.trim();
   const contact  = document.getElementById('contact-name').value.trim();
-  const desc     = document.getElementById('description').value.trim();
-  const cats     = getSelectedCats();
-  const industry = document.getElementById('industry').value;
+  const co       = document.getElementById('company-name').value.trim();
   const region   = document.getElementById('region').value;
-  const newBiz   = document.getElementById('new-biz').value;
+  const industry = document.getElementById('industry').value;
   const innovBiz = document.getElementById('innovation-biz').value;
+  const newBiz   = document.getElementById('new-biz').value;
+  const desc     = document.getElementById('description').value.trim();
+  const hubFunded= document.getElementById('hub-funded').value;
   const quarter  = deriveQuarter(date);
-  const hubFunded = document.getElementById('hub-funded').value;
+  const cats     = getSelectedCats();
 
-  // Validation
-  if (!org)     { showToast('⚠️ Please select your organization'); return; }
-  if (!name)    { showToast('⚠️ Please enter your name'); return; }
-  if (!date)    { showToast('⚠️ Please select a date'); return; }
-  if (!contact) { showToast('⚠️ Please enter the client name'); return; }
-  if (!co)      { showToast('⚠️ Please enter the business name'); return; }
-  if (!region)  { showToast('⚠️ Please select a region'); return; }
-  if (!industry){ showToast('⚠️ Please select an industry'); return; }
-  if (industry === 'Other' && !document.getElementById('industry-other').value.trim()) {
-    showToast('⚠️ Please specify the industry'); return;
-  }
-  if (!desc)    { showToast('⚠️ Please add a brief description'); return; }
-  if (cats.length === 0) { showToast('⚠️ Please select at least one activity type'); return; }
-  if (cats.includes('Technical Assistance')) {
-    const taTypes = getSelectedTA();
-    if (taTypes.length === 0) { showToast('⚠️ Please select at least one TA type'); return; }
-    const taHours = document.getElementById('ta-hours').value;
-    if (!taHours) { showToast('⚠️ Please enter hours of TA delivered'); return; }
-  }
+  if (!org)          { showToast('⚠️ Please select your organization'); return; }
+  if (!name)         { showToast('⚠️ Please enter your name'); return; }
+  if (!date)         { showToast('⚠️ Please enter the activity date'); return; }
+  if (!contact)      { showToast('⚠️ Please enter the client name'); return; }
+  if (!co)           { showToast('⚠️ Please enter the business name'); return; }
+  if (cats.length === 0) { showToast('⚠️ Please select at least one support type'); return; }
+
   if (cats.includes('Navigation')) {
     const refTo = document.getElementById('referral-to').value;
     if (!refTo) { showToast('⚠️ Please select who you referred this person to'); return; }
@@ -1141,89 +789,12 @@ function resetManualForm() {
   document.getElementById('ta-other-wrap').style.display = 'none';
 }
 
-// ── Render log ─────────────────────────────────────────────────────────────────
-function renderLog() {
-  const body = document.getElementById('log-body');
-  const empty = document.getElementById('log-empty');
-  const tableWrap = document.getElementById('log-table-wrap');
-  const count = document.getElementById('log-count');
 
-  count.textContent = `${activities.length} entr${activities.length === 1 ? 'y' : 'ies'}`;
 
-  if (activities.length === 0) {
-    empty.style.display = 'block';
-    tableWrap.style.display = 'none';
-    return;
-  }
-  empty.style.display = 'none';
-  tableWrap.style.display = 'block';
-
-  body.innerHTML = activities.map(a => {
-    const tags = (a.categories || []).map(c =>
-      `<span class="tag ${CAT_TAGS[c] || 'tag-nav'}">${c}</span>`
-    ).join(' ');
-    const newBizIcon = a.newBusiness === 'Yes' ? '🆕 Yes' : a.newBusiness === 'No' ? 'No' : '?';
-    const hubIcon    = a.hubFunded === 'Yes' ? '✅' : a.hubFunded === 'No' ? 'No' : '?';
-    const taList     = (a.taTypes || []).join(', ') || '—';
-    const taHrs      = a.taHours > 0 ? a.taHours : '—';
-    const refTo      = a.referralTo || '—';
-    return `<tr>
-      <td style="white-space:nowrap">${a.date || ''}</td>
-      <td style="font-weight:500;font-size:11px">${a.quarter || ''}</td>
-      <td style="font-weight:500">${a.org || ''}</td>
-      <td>${a.clientName || a.contact || ''}<br><span style="font-size:10px;color:var(--muted)">${a.contactEmail || ''}</span></td>
-      <td style="font-weight:600">${a.company || ''}</td>
-      <td style="font-size:11px">${(a.region || '').replace(/\s*[\(\[].*[\)\]]/g,'').trim()}</td>
-      <td style="font-size:11px">${a.industry || ''}</td>
-      <td style="font-size:11px;text-align:center">${newBizIcon}</td>
-      <td>${tags}</td>
-      <td style="font-size:10px;max-width:130px;color:var(--muted)">${taList}</td>
-      <td style="text-align:center">${taHrs}</td>
-      <td style="font-size:11px">${refTo}</td>
-      <td style="text-align:center;font-size:11px">${hubIcon}</td>
-      <td style="font-size:11px;max-width:160px;color:var(--muted)">${a.description || ''}</td>
-    </tr>`;
-  }).join('');
-}
-
-// ── Export CSV ─────────────────────────────────────────────────────────────────
-function clearLog() {
-  if (!confirm('Clear all entries from this device? This cannot be undone. (Entries already synced to Google Sheets are not affected.)')) return;
-  activities = [];
-  save();
-  showToast('✓ Log cleared');
-}
-
-function exportCSV() {
-  if (activities.length === 0) { showToast('No activities to export yet'); return; }
-  const headers = ['Date','Quarter','Organization','Reporter','Client Name','Business Name','Contact Email','Region','Industry','Innovation Biz?','New Business?','Support Types','TA Types','TA Hours','Referred To','Description','Hub Funded','Source'];
-  const rows = activities.map(a => [
-    a.date, a.quarter, a.org, a.reporter,
-    a.clientName || a.contact, a.company, a.contactEmail,
-    a.region, a.industry, a.innovationBiz, a.newBusiness,
-    (a.categories || []).join('; '),
-    (a.taTypes || []).join('; '),
-    a.taHours || '',
-    a.referralTo || '',
-    a.description,
-    a.hubFunded, a.source
-  ].map(v => `"${(String(v||'')).replace(/"/g,'""')}"`));
-
-  const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
-  const blob = new Blob([csv], { type: 'text/csv' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `ERN_Activities_${new Date().toISOString().split('T')[0]}.csv`;
-  a.click();
-  URL.revokeObjectURL(url);
-  showToast('✓ CSV exported!');
-}
 
 // ── Persist ────────────────────────────────────────────────────────────────────
 function save() {
   localStorage.setItem('ern_activities', JSON.stringify(activities));
-  renderLog();
 }
 
 // ── Toast ──────────────────────────────────────────────────────────────────────
