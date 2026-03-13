@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ERN Activity Logger – Central Oregon Innovation Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:    #1a2b4a;
+    --blue:    #2563a8;
+    --sky:     #e8f1fb;
+    --orange:  #d4580a;
+    --orange-l:#fdf0e8;
+    --green:   #2d6a4f;
+    --green-l: #e8f5ee;
+    --slate:   #f4f6f9;
+    --border:  #dde3ed;
+    --text:    #1a2236;
+    --muted:   #6b7a99;
+    --white:   #ffffff;
+    --radius:  12px;
+    --shadow:  0 4px 24px rgba(26,43,74,0.10);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--slate);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── Header ── */
+  header {
+    background: var(--navy);
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .logo-mark {
+    width: 36px; height: 36px;
+    background: var(--orange);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px; color: white; font-weight: 700;
+  }
+  .logo-text {
+    font-size: 15px; font-weight: 600; color: white; letter-spacing: 0.01em;
+  }
+  .logo-sub { font-size: 11px; color: rgba(255,255,255,0.55); font-weight: 400; }
+  .header-tag {
+    background: rgba(255,255,255,0.10);
+    color: rgba(255,255,255,0.75);
+    font-size: 11px; font-weight: 500;
+    padding: 4px 12px; border-radius: 20px;
+    letter-spacing: 0.06em; text-transform: uppercase;
+  }
+
+  /* ── Main layout ── */
+  .container {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 36px 20px 80px;
+  }
+
+  .page-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 32px; color: var(--navy);
+    margin-bottom: 6px;
+    line-height: 1.15;
+  }
+  .page-sub {
+    font-size: 14px; color: var(--muted);
+    margin-bottom: 32px;
+  }
+
+  /* ── Mode toggle ── */
+  .mode-toggle {
+    display: flex;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 4px;
+    gap: 4px;
+    margin-bottom: 28px;
+    box-shadow: var(--shadow);
+  }
+  .mode-btn {
+    flex: 1;
+    padding: 12px 16px;
+    border: none;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px; font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--muted);
+    background: transparent;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .mode-btn.active {
+    background: var(--navy);
+    color: white;
+    box-shadow: 0 2px 8px rgba(26,43,74,0.25);
+  }
+  .mode-btn svg { width: 16px; height: 16px; }
+
+  /* ── Card ── */
+  .card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+  }
+  .card-title {
+    font-size: 13px; font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.08em;
+    margin-bottom: 18px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .card-title::before {
+    content: '';
+    display: block;
+    width: 3px; height: 14px;
+    background: var(--orange);
+    border-radius: 2px;
+  }
+
+  /* ── Upload zone ── */
+  .upload-zone {
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 40px 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--slate);
+    position: relative;
+  }
+  .upload-zone:hover, .upload-zone.drag-over {
+    border-color: var(--blue);
+    background: var(--sky);
+  }
+  .upload-zone input[type=file] {
+    position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+  }
+  .upload-icon { font-size: 36px; margin-bottom: 12px; }
+  .upload-title { font-weight: 600; font-size: 15px; color: var(--navy); margin-bottom: 6px; }
+  .upload-hint { font-size: 12px; color: var(--muted); }
+
+  .preview-wrap {
+    position: relative; margin-top: 16px;
+    border-radius: 8px; overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .preview-wrap img { width: 100%; display: block; max-height: 280px; object-fit: cover; }
+  .preview-remove {
+    position: absolute; top: 8px; right: 8px;
+    background: rgba(0,0,0,0.6); color: white;
+    border: none; border-radius: 6px;
+    width: 28px; height: 28px; cursor: pointer;
+    font-size: 16px; display: flex; align-items: center; justify-content: center;
+  }
+
+  /* ── AI Extract button ── */
+  .btn-ai {
+    width: 100%; margin-top: 16px;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--blue) 0%, #1a4a8a 100%);
+    color: white; border: none; border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px; font-weight: 600;
+    cursor: pointer; transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .btn-ai:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(37,99,168,0.35); }
+  .btn-ai:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+  /* ── Extracted results ── */
+  .extracted-list { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+  .extracted-item {
+    background: var(--sky);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--blue);
+    border-radius: 8px;
+    padding: 14px 16px;
+    display: flex; align-items: flex-start; gap: 12px;
+  }
+  .extracted-item.confirmed { border-left-color: var(--green); background: var(--green-l); }
+  .extracted-item.rejected { opacity: 0.4; }
+  .extracted-check {
+    width: 20px; height: 20px; min-width: 20px;
+    border-radius: 4px; border: 2px solid var(--blue);
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    font-size: 12px; transition: all 0.15s; margin-top: 2px;
+  }
+  .extracted-check.checked { background: var(--green); border-color: var(--green); color: white; }
+  .extracted-content { flex: 1; }
+  .extracted-meeting { font-weight: 600; font-size: 14px; color: var(--navy); }
+  .extracted-meta { font-size: 12px; color: var(--muted); margin-top: 3px; }
+  .extracted-cat {
+    display: inline-block; margin-top: 6px;
+    background: var(--blue); color: white;
+    font-size: 11px; font-weight: 600;
+    padding: 2px 8px; border-radius: 20px;
+    letter-spacing: 0.04em;
+  }
+
+  /* ── Form fields ── */
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .form-grid.single { grid-template-columns: 1fr; }
+  @media (max-width: 540px) { .form-grid { grid-template-columns: 1fr; } }
+
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field label {
+    font-size: 12px; font-weight: 600;
+    color: var(--muted); text-transform: uppercase; letter-spacing: 0.07em;
+  }
+  .field label .req { color: var(--orange); }
+  .field input, .field select, .field textarea {
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px; color: var(--text);
+    background: var(--white);
+    transition: border 0.15s;
+    outline: none;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(37,99,168,0.12);
+  }
+  .field textarea { resize: vertical; min-height: 70px; }
+  .field select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7a99' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; }
+
+  /* ── Category pills ── */
+  .category-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 8px;
+    margin-top: 4px;
+  }
+  .cat-pill {
+    padding: 10px 14px;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    font-size: 12px; font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: center;
+    color: var(--muted);
+    user-select: none;
+  }
+  .cat-pill:hover { border-color: var(--blue); color: var(--blue); }
+  .cat-pill.selected {
+    border-color: var(--blue);
+    background: var(--sky);
+    color: var(--navy);
+    font-weight: 600;
+  }
+  .cat-pill .cat-icon { display: block; font-size: 18px; margin-bottom: 4px; }
+
+  /* ── Submit button ── */
+  .btn-submit {
+    width: 100%; padding: 16px;
+    background: var(--orange);
+    color: white; border: none; border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px; font-weight: 600;
+    cursor: pointer; transition: all 0.2s;
+    margin-top: 8px;
+  }
+  .btn-submit:hover { background: #b54808; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(212,88,10,0.35); }
+
+  /* ── Log table ── */
+  .log-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .log-count {
+    background: var(--navy); color: white;
+    font-size: 12px; font-weight: 600;
+    padding: 4px 12px; border-radius: 20px;
+  }
+  .btn-export {
+    padding: 8px 16px;
+    background: var(--green);
+    color: white; border: none; border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px; font-weight: 600;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .btn-export:hover { background: #235a40; }
+
+  .log-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .log-table th {
+    background: var(--navy); color: white;
+    padding: 10px 12px; text-align: left;
+    font-weight: 600; font-size: 11px;
+    letter-spacing: 0.05em; text-transform: uppercase;
+  }
+  .log-table th:first-child { border-radius: 8px 0 0 0; }
+  .log-table th:last-child { border-radius: 0 8px 0 0; }
+  .log-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    color: var(--text);
+  }
+  .log-table tr:nth-child(even) td { background: var(--slate); }
+  .log-table tr:last-child td:first-child { border-radius: 0 0 0 8px; }
+  .log-table tr:last-child td:last-child { border-radius: 0 0 8px 0; }
+  .tag {
+    display: inline-block; padding: 2px 8px;
+    border-radius: 20px; font-size: 10px; font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+  .tag-nav    { background: #dbeafe; color: #1e40af; }
+  .tag-ta     { background: #fef3c7; color: #92400e; }
+  .tag-capital{ background: var(--green-l); color: var(--green); }
+  .tag-network{ background: var(--orange-l); color: var(--orange); }
+  .tag-skills { background: #f3e8ff; color: #6b21a8; }
+
+  /* ── Toast ── */
+  .toast {
+    position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: var(--navy); color: white;
+    padding: 14px 24px; border-radius: 10px;
+    font-size: 14px; font-weight: 500;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 999; white-space: nowrap;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* ── Loading spinner ── */
+  .spinner {
+    width: 18px; height: 18px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Empty state ── */
+  .empty-state {
+    text-align: center; padding: 40px 20px;
+    color: var(--muted);
+  }
+  .empty-state svg { width: 48px; height: 48px; opacity: 0.3; margin-bottom: 12px; }
+  .empty-state p { font-size: 14px; }
+
+  .section-divider {
+    height: 1px; background: var(--border);
+    margin: 24px 0;
+  }
+  .helper-text { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+  .ai-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: linear-gradient(135deg, #2563a8, #1a4a8a);
+    color: white; font-size: 10px; font-weight: 700;
+    padding: 3px 8px; border-radius: 20px;
+    letter-spacing: 0.06em; text-transform: uppercase;
+  }
+
+  /* ── Sub-sections (TA, Nav) ── */
+  .sub-section {
+    background: var(--slate);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+  }
+  .sub-section-label {
+    font-size: 12px; font-weight: 700;
+    color: var(--navy);
+    text-transform: uppercase; letter-spacing: 0.06em;
+    margin-bottom: 12px;
+  }
+  .ta-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  @media (max-width: 480px) { .ta-grid { grid-template-columns: 1fr; } }
+  .ta-check {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; color: var(--text);
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s;
+    background: var(--white);
+  }
+  .ta-check:hover { border-color: var(--blue); background: var(--sky); }
+  .ta-check input[type=checkbox] { accent-color: var(--blue); width: 15px; height: 15px; cursor: pointer; }
+  .ta-check:has(input:checked) { border-color: var(--blue); background: var(--sky); font-weight: 500; }
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-mark">E</div>
+    <div>
+      <div class="logo-text">ERN Activity Logger</div>
+      <div class="logo-sub">Central Oregon Innovation Hub</div>
+    </div>
+  </div>
+  <div class="header-tag">Business Oregon Tracking</div>
+</header>
+
+<div class="container">
+  <div class="page-title">Log an Activity</div>
+  <div class="page-sub">Record every entrepreneur interaction for Business Oregon reporting. Takes 60 seconds.</div>
+
+  <!-- Mode Toggle -->
+  <div class="mode-toggle">
+    <button class="mode-btn active" id="btn-manual" onclick="setMode('manual')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+      Manual Entry
+    </button>
+    <button class="mode-btn" id="btn-screenshot" onclick="setMode('screenshot')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+      Email Screenshot
+      <span class="ai-badge">✦ AI</span>
+    </button>
+  </div>
+
+  <!-- SCREENSHOT MODE -->
+  <div id="mode-screenshot" style="display:none;">
+    <div class="card">
+      <div class="card-title">Upload Email Screenshot</div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:16px;">Screenshot an email thread with a founder or entrepreneur. AI will extract the company name, contact, what was discussed, and suggest the right activity category — then pre-fill the form for you to confirm and submit.</p>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:16px;padding:10px 12px;background:var(--sky);border-radius:8px;border-left:3px solid var(--blue);">💡 <strong>Tip:</strong> The more of the email thread visible, the better. Include the subject line, sender name, and body. Works with Gmail, Outlook, Apple Mail.</p>
+
+      <div class="upload-zone" id="upload-zone">
+        <input type="file" accept="image/*" id="screenshot-input" onchange="handleFileSelect(event)">
+        <div class="upload-icon">✉️</div>
+        <div class="upload-title">Drop your email screenshot here</div>
+        <div class="upload-hint">or click to browse · PNG, JPG, HEIC supported</div>
+      </div>
+
+      <div class="preview-wrap" id="preview-wrap" style="display:none;">
+        <img id="preview-img" src="" alt="Calendar preview">
+        <button class="preview-remove" onclick="clearPreview()">✕</button>
+      </div>
+
+      <button class="btn-ai" id="extract-btn" onclick="extractFromScreenshot()" style="display:none;" disabled>
+        <span class="spinner" id="extract-spinner" style="display:none;"></span>
+        <span id="extract-label">✦ Extract Activity Details with AI</span>
+      </button>
+    </div>
+
+    <div id="extracted-results" style="display:none;">
+      <div class="card">
+        <div class="card-title">AI-Extracted Details – Review &amp; Confirm</div>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:16px;">Review what AI found in your email. Confirm the interaction, then complete any missing fields before submitting.</p>
+        <div class="extracted-list" id="extracted-list"></div>
+
+        <div class="section-divider"></div>
+
+        <button class="btn-submit" onclick="useExtractedInForm()" style="margin-top:4px;">
+          Review &amp; Complete in Form →
+        </button>
+        <p style="font-size:11px;color:var(--muted);text-align:center;margin-top:10px;">
+          AI pre-fills what it found. You complete the remaining required fields and submit.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- MANUAL MODE -->
+  <div id="mode-manual">
+
+    <!-- CARD 1: Reporter -->
+    <div class="card">
+      <div class="card-title">Your Info</div>
+      <div class="form-grid">
+        <div class="field">
+          <label>Your Organization <span class="req">*</span></label>
+          <select id="org">
+            <option value="">Select your org...</option>
+            <option>EDCO</option><option>Deschutes Women in Business</option>
+            <option>SCORE</option><option>OSU-Cascades</option>
+            <option>SBDC</option><option>Bend Outdoor Worx</option>
+            <option>Opportunity Knocks</option><option>Cultivate Bend</option>
+            <option>Oregon Life Sciences</option><option>Latino Founders</option>
+            <option>OEN</option><option>Business Oregon</option><option>Other</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Your Name <span class="req">*</span></label>
+          <input type="text" id="reporter-name" placeholder="e.g. Lisa Hovey">
+        </div>
+        <div class="field">
+          <label>Date of Activity <span class="req">*</span></label>
+          <input type="date" id="activity-date">
+        </div>
+
+      </div>
+    </div>
+
+    <!-- CARD 2: Company / Founder -->
+    <div class="card">
+      <div class="card-title">Company &amp; Founder</div>
+      <div class="form-grid">
+        <div class="field">
+          <label>Client Full Name <span class="req">*</span></label>
+          <input type="text" id="contact-name" placeholder="e.g. Jane Smith">
+        </div>
+        <div class="field">
+          <label>Business Name <span class="req">*</span></label>
+          <input type="text" id="company-name" placeholder="e.g. Cascade Gear Co.">
+        </div>
+        <div class="field">
+          <label>Client Email</label>
+          <input type="email" id="contact-email" placeholder="jane@cascadegear.com">
+        </div>
+        <div class="field">
+          <label>Region <span class="req">*</span></label>
+          <select id="region">
+            <option value="">Select region...</option>
+            <option value="Bend Central/North (97701, 97702, 97703)">Bend – Central/North (97701, 97702, 97703)</option>
+            <option value="Bend Rural/Southern (97707, 97708, 97709)">Bend – Rural/Southern (97707, 97708, 97709)</option>
+            <option value="Redmond (97756)">Redmond (97756)</option>
+            <option value="La Pine (97739)">La Pine (97739)</option>
+            <option value="Sisters (97759)">Sisters (97759)</option>
+            <option value="Terrebonne/Crooked River Ranch (97760)">Terrebonne / Crooked River Ranch (97760)</option>
+            <option value="Sunriver (97707)">Sunriver (97707)</option>
+            <option value="Other/Unknown">Other / Unknown</option>
+          </select>
+          <div class="helper-text">Zip code of business location</div>
+        </div>
+        <div class="field">
+          <label>Industry <span class="req">*</span></label>
+          <select id="industry" onchange="handleIndustryChange()">
+            <option value="">Select industry...</option>
+            <option>Adv. Manufacturing</option>
+            <option>Adv. Materials</option>
+            <option>AgTech</option>
+            <option>Climate Tech</option>
+            <option>EdTech</option>
+            <option>Food &amp; Bev</option>
+            <option>Life/bioscience</option>
+            <option>Natural Resources</option>
+            <option>Technology</option>
+            <option>UAS</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="field" id="industry-other-wrap" style="display:none;">
+          <label>Specify Industry <span class="req">*</span></label>
+          <input type="text" id="industry-other" placeholder="Describe the industry...">
+        </div>
+        <div class="field">
+          <label>Innovation-Based Business? <span class="req">*</span></label>
+          <select id="innovation-biz">
+            <option value="">Select...</option>
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+            <option value="Unsure">Unsure</option>
+          </select>
+          <div class="helper-text">Innovation-based = traded-sector, scalable, selling beyond local market</div>
+        </div>
+        <div class="field">
+          <label>New Business? (&lt;12 months) <span class="req">*</span></label>
+          <select id="new-biz">
+            <option value="">Select...</option>
+            <option value="Yes">Yes – under 12 months old</option>
+            <option value="No">No – established business</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 3: Activity Type -->
+    <div class="card">
+      <div class="card-title">Type of Support <span style="font-weight:400;font-size:11px;color:var(--muted);margin-left:4px;text-transform:none;letter-spacing:0;">Select all that apply</span></div>
+      <div class="category-grid" id="category-grid">
+        <div class="cat-pill" data-cat="Navigation" onclick="toggleCat(this)" id="pill-nav">
+          <span class="cat-icon">🧭</span>Navigation / Referral
+        </div>
+        <div class="cat-pill" data-cat="Technical Assistance" onclick="toggleCat(this)" id="pill-ta">
+          <span class="cat-icon">🔧</span>Technical Assistance
+        </div>
+        <div class="cat-pill" data-cat="In-depth skills program" onclick="toggleCat(this)">
+          <span class="cat-icon">📚</span>In-Depth Skills Program
+        </div>
+        <div class="cat-pill" data-cat="Mentor program" onclick="toggleCat(this)">
+          <span class="cat-icon">💬</span>Mentor Program
+        </div>
+        <div class="cat-pill" data-cat="Networking event" onclick="toggleCat(this)">
+          <span class="cat-icon">🤝</span>Networking Event
+        </div>
+        <div class="cat-pill" data-cat="Access to Capital" onclick="toggleCat(this)">
+          <span class="cat-icon">💰</span>Access to Capital
+        </div>
+      </div>
+
+      <!-- Navigation sub-fields -->
+      <div id="nav-sub" style="display:none;margin-top:18px;">
+        <div class="sub-section">
+          <div class="sub-section-label">🧭 Navigation Details</div>
+          <div class="field">
+            <label>Referred / Connected To <span class="req">*</span></label>
+            <select id="referral-to" onchange="handleReferralChange()">
+              <option value="">Select organization...</option>
+              <option>EDCO</option>
+              <option>Deschutes Women in Business</option>
+              <option>SCORE</option>
+              <option>OSU-Cascades</option>
+              <option>SBDC</option>
+              <option>Bend Outdoor Worx</option>
+              <option>Opportunity Knocks</option>
+              <option>Cultivate Bend</option>
+              <option>Oregon Life Sciences</option>
+              <option>Latino Founders</option>
+              <option>OEN</option>
+              <option>Business Oregon / OBDD</option>
+              <option>Foundry Collective</option>
+              <option>Embark</option>
+              <option>The Haven</option>
+              <option>Oregon Outdoor Alliance</option>
+              <option>Oregon Bioscience Association</option>
+              <option>TAO</option>
+              <option>Rural Development Initiative</option>
+              <option>Warm Springs Tribes – Community Action Team</option>
+              <option>Latino Community Association</option>
+              <option>Bend Chamber of Commerce</option>
+              <option>La Pine Chamber of Commerce</option>
+              <option>Redmond Chamber of Commerce</option>
+              <option>Sisters Chamber of Commerce</option>
+              <option>Madras Chamber of Commerce</option>
+              <option>East Cascades Works</option>
+              <option>Central Oregon Intergovernmental Council</option>
+              <option>Other</option>
+            </select>
+            <div class="helper-text">Select the organization you referred this founder to</div>
+          </div>
+          <div class="field" id="referral-other-wrap" style="display:none;">
+            <label>Specify Organization <span class="req">*</span></label>
+            <input type="text" id="referral-other-text" placeholder="Organization name...">
+          </div>
+        </div>
+      </div>
+
+      <!-- TA sub-fields -->
+      <div id="ta-sub" style="display:none;margin-top:18px;">
+        <div class="sub-section">
+          <div class="sub-section-label">🔧 Technical Assistance Type <span style="font-weight:400;font-size:11px;">(select all that apply)</span></div>
+          <div class="ta-grid" id="ta-grid">
+            <label class="ta-check"><input type="checkbox" value="General business advising"> General business advising</label>
+            <label class="ta-check"><input type="checkbox" value="Access to capital"> Access to capital</label>
+            <label class="ta-check"><input type="checkbox" value="Regulation/compliance"> Regulation / compliance</label>
+            <label class="ta-check"><input type="checkbox" value="Talent/workforce development"> Talent / workforce development</label>
+            <label class="ta-check"><input type="checkbox" value="Marketing/sales"> Marketing / sales</label>
+            <label class="ta-check"><input type="checkbox" value="Operations/Process improvement"> Operations / process improvement</label>
+            <label class="ta-check"><input type="checkbox" value="Export/trade"> Export / trade</label>
+            <label class="ta-check" id="ta-other-label"><input type="checkbox" value="Other" onchange="handleTAOther(this)"> Other</label>
+          </div>
+          <div class="field" id="ta-other-wrap" style="display:none;margin-top:12px;">
+            <label>Specify TA Type</label>
+            <input type="text" id="ta-other-text" placeholder="Describe the type of assistance...">
+          </div>
+          <div class="form-grid" style="margin-top:14px;">
+            <div class="field">
+              <label>Hours of TA Delivered <span class="req">*</span></label>
+              <input type="number" id="ta-hours" min="0.25" step="0.25" placeholder="e.g. 1.5">
+              <div class="helper-text">Hub-funded TA hours only. Minimum 0.25 hrs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 4: Details -->
+    <div class="card">
+      <div class="card-title">Activity Details</div>
+      <div class="form-grid single">
+        <div class="field">
+          <label>Brief Description <span class="req">*</span></label>
+          <textarea id="description" placeholder="e.g. Reviewed pitch deck. Gave feedback on market sizing and financial projections. Referred to OEN for investor prep."></textarea>
+          <div class="helper-text">One or two sentences. This is your audit trail with Business Oregon.</div>
+        </div>
+        <div class="field">
+          <label>Hub-Funded Activity?</label>
+          <select id="hub-funded">
+            <option value="Yes">Yes – Hub funded this activity</option>
+            <option value="No">No – Partner-funded / no Hub funds</option>
+          </select>
+          <div class="helper-text">Hub-funded activities count toward your hard targets. Partner-funded are tracked separately.</div>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn-submit" onclick="submitManual()">Log This Activity →</button>
+  </div>
+
+    <!-- Activity Log -->
+  <div style="margin-top: 40px;">
+    <div class="log-header">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="font-family:'DM Serif Display',serif;font-size:20px;color:var(--navy);">Activity Log</div>
+        <div class="log-count" id="log-count">0 entries</div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn-export" onclick="exportCSV()">⬇ Export CSV</button>
+        <button class="btn-export" style="background:var(--red-l);color:var(--red);border-color:var(--red);" onclick="clearLog()">✕ Clear Log</button>
+      </div>
+    </div>
+    <div class="card" style="padding:0;overflow:hidden;">
+      <div id="log-empty" class="empty-state">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+        <p>No activities logged yet.<br>Submit your first entry above.</p>
+      </div>
+      <div id="log-table-wrap" style="display:none;overflow-x:auto;">
+        <table class="log-table" id="log-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Qtr</th>
+              <th>Org</th>
+              <th>Client</th>
+              <th>Business</th>
+              <th>Region</th>
+              <th>Industry</th>
+              <th>New?</th>
+              <th>Support Type</th>
+              <th>TA Types</th>
+              <th>Hrs</th>
+              <th>Referred To</th>
+              <th>Hub?</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody id="log-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── CONFIGURATION ──────────────────────────────────────────────────────────────
+// After deploying your Apps Script, paste the Web App URL here:
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxpdqNnXJByBEPcvXwQR7bUXfJEsRKmYGpTtmR4BE8WPF4zBehGGwm_0aoKu0q7tfLS9g/exec";
+
+// ── State ──────────────────────────────────────────────────────────────────────
+let activities = JSON.parse(localStorage.getItem('ern_activities') || '[]');
+let screenshotFile = null;
+let screenshotB64 = null;
+let extractedItems = [];
+
+const CAT_TAGS = {
+  'Navigation':        'tag-nav',
+  'Technical Assistance': 'tag-ta',
+  'Access to Capital': 'tag-capital',
+  'Networking Event':  'tag-network',
+  'Skills Development':'tag-skills',
+  'Mentoring':         'tag-skills',
+};
+
+// ── Init ───────────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('activity-date').value = new Date().toISOString().split('T')[0];
+  renderLog();
+  setupDragDrop();
+});
+
+// ── Mode switch ────────────────────────────────────────────────────────────────
+function setMode(mode) {
+  document.getElementById('mode-manual').style.display     = mode === 'manual'     ? 'block' : 'none';
+  document.getElementById('mode-screenshot').style.display = mode === 'screenshot' ? 'block' : 'none';
+  document.getElementById('btn-manual').classList.toggle('active',     mode === 'manual');
+  document.getElementById('btn-screenshot').classList.toggle('active', mode === 'screenshot');
+}
+
+// ── Category pills ─────────────────────────────────────────────────────────────
+function deriveQuarter(dateStr) {
+  if (!dateStr) return '';
+  const month = parseInt(dateStr.split('-')[1], 10);
+  const year  = dateStr.split('-')[0];
+  if (month <= 3)  return `Q1 ${year}`;
+  if (month <= 6)  return `Q2 ${year}`;
+  if (month <= 9)  return `Q3 ${year}`;
+  return `Q4 ${year}`;
+}
+
+function toggleCat(el) {
+  el.classList.toggle('selected');
+  const cat = el.dataset.cat;
+  // Show/hide conditional sub-sections
+  if (cat === 'Navigation') {
+    document.getElementById('nav-sub').style.display = el.classList.contains('selected') ? 'block' : 'none';
+  }
+  if (cat === 'Technical Assistance') {
+    document.getElementById('ta-sub').style.display = el.classList.contains('selected') ? 'block' : 'none';
+  }
+}
+function getSelectedCats() {
+  return [...document.querySelectorAll('.cat-pill.selected')].map(el => el.dataset.cat);
+}
+function handleIndustryChange() {
+  const val = document.getElementById('industry').value;
+  document.getElementById('industry-other-wrap').style.display = val === 'Other' ? 'block' : 'none';
+}
+function handleTAOther(cb) {
+  document.getElementById('ta-other-wrap').style.display = cb.checked ? 'block' : 'none';
+}
+function handleReferralChange() {
+  const val = document.getElementById('referral-to').value;
+  document.getElementById('referral-other-wrap').style.display = val === 'Other' ? 'block' : 'none';
+}
+function getSelectedTA() {
+  const checked = [...document.querySelectorAll('#ta-grid input[type=checkbox]:checked')].map(cb => cb.value);
+  if (checked.includes('Other')) {
+    const other = document.getElementById('ta-other-text').value.trim();
+    if (other) {
+      const idx = checked.indexOf('Other');
+      checked[idx] = 'Other: ' + other;
+    }
+  }
+  return checked;
+}
+
+// ── File handling ──────────────────────────────────────────────────────────────
+function setupDragDrop() {
+  const zone = document.getElementById('upload-zone');
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault(); zone.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) processFile(file);
+  });
+}
+
+function handleFileSelect(e) {
+  const file = e.target.files[0];
+  if (file) processFile(file);
+}
+
+function processFile(file) {
+  screenshotFile = file;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    screenshotB64 = ev.target.result.split(',')[1];
+    document.getElementById('preview-img').src = ev.target.result;
+    document.getElementById('preview-wrap').style.display = 'block';
+    document.getElementById('extract-btn').style.display = 'flex';
+    document.getElementById('extract-btn').disabled = false;
+  };
+  reader.readAsDataURL(file);
+}
+
+function clearPreview() {
+  screenshotFile = null; screenshotB64 = null;
+  document.getElementById('preview-img').src = '';
+  document.getElementById('preview-wrap').style.display = 'none';
+  document.getElementById('extract-btn').style.display = 'none';
+  document.getElementById('extracted-results').style.display = 'none';
+  document.getElementById('screenshot-input').value = '';
+}
+
+// ── AI Extraction ──────────────────────────────────────────────────────────────
+async function extractFromScreenshot() {
+  const btn = document.getElementById('extract-btn');
+  const spinner = document.getElementById('extract-spinner');
+  const label = document.getElementById('extract-label');
+
+  btn.disabled = true;
+  spinner.style.display = 'block';
+  label.textContent = 'Analyzing your calendar...';
+
+  if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes("YOUR_APPS_SCRIPT")) {
+    showToast('⚠️ Paste your Apps Script URL into the HTML file first');
+    btn.disabled = false; spinner.style.display = 'none';
+    label.textContent = '✦ Extract Activity Details with AI';
+    return;
+  }
+
+  try {
+    const response = await fetch(APPS_SCRIPT_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        action: "analyze_email_screenshot",
+        imageBase64: screenshotB64,
+        mimeType: screenshotFile.type || "image/png"
+      })
+    });
+
+    const parsed = await response.json();
+
+    if (parsed.error) throw new Error(parsed.error);
+
+    renderEmailExtracted(parsed);
+    document.getElementById('extracted-results').style.display = 'block';
+    document.getElementById('extracted-results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  } catch(err) {
+    showToast('⚠️ Could not read email. Try a clearer screenshot or use manual entry.');
+    console.error(err);
+  } finally {
+    btn.disabled = false;
+    spinner.style.display = 'none';
+    label.textContent = '✦ Extract Activity Details with AI';
+  }
+}
+
+function renderEmailExtracted(data) {
+  const list = document.getElementById('extracted-list');
+  list.innerHTML = '';
+
+  // Show a summary of what AI found
+  const fields = [
+    { label: 'Client Name',    value: data.clientName,   icon: '👤' },
+    { label: 'Business Name',  value: data.companyName,  icon: '🏢' },
+    { label: 'Email',          value: data.email,        icon: '📧' },
+    { label: 'Date',           value: data.date,         icon: '📅' },
+    { label: 'Category',       value: data.category,     icon: '🏷️' },
+    { label: 'Summary',        value: data.summary,      icon: '📝' },
+    { label: 'Industry Guess', value: data.industryGuess,icon: '🏭' },
+  ].filter(f => f.value);
+
+  if (fields.length === 0) {
+    list.innerHTML = '<p style="color:var(--muted);font-size:13px;">Could not extract enough detail. Try a clearer screenshot or use manual entry.</p>';
+    return;
+  }
+
+  const summaryDiv = document.createElement('div');
+  summaryDiv.innerHTML = fields.map(f =>
+    `<div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;">
+      <span style="width:120px;font-weight:600;color:var(--muted);flex-shrink:0;">${f.icon} ${f.label}</span>
+      <span style="color:var(--text);">${f.value}</span>
+    </div>`
+  ).join('');
+  list.appendChild(summaryDiv);
+
+  // Confidence note
+  const note = document.createElement('p');
+  note.style.cssText = 'font-size:12px;color:var(--muted);margin-top:12px;padding:10px;background:var(--sky);border-radius:6px;';
+  note.innerHTML = '✦ AI pre-filled what it could find. Review below, confirm your org and name, then submit.';
+  list.appendChild(note);
+
+  // Pre-fill the manual form fields
+  if (data.clientName)   { document.getElementById('contact-name').value   = data.clientName; }
+  if (data.companyName)  { document.getElementById('company-name').value   = data.companyName; }
+  if (data.email)        { document.getElementById('contact-email').value  = data.email; }
+  if (data.date)         { document.getElementById('activity-date').value  = data.date; }
+  if (data.summary)      { document.getElementById('description').value    = '[AI] ' + data.summary; }
+
+  // Set category pill
+  if (data.category) {
+    document.querySelectorAll('.cat-pill').forEach(pill => {
+      if (pill.dataset.cat === data.category) {
+        pill.classList.add('selected');
+        // Trigger sub-sections
+        if (data.category === 'Navigation') document.getElementById('nav-sub').style.display = 'block';
+        if (data.category === 'Technical Assistance') document.getElementById('ta-sub').style.display = 'block';
+      }
+    });
+  }
+
+  // Set industry if confident
+  if (data.industryGuess) {
+    const industrySelect = document.getElementById('industry');
+    for (let opt of industrySelect.options) {
+      if (opt.value === data.industryGuess) {
+        industrySelect.value = data.industryGuess;
+        break;
+      }
+    }
+  }
+}
+
+// Keep old renderExtracted as no-op fallback
+function renderExtracted(data) { renderEmailExtracted(data); }
+
+function useExtractedInForm() {
+  // Hide extracted results, switch to manual mode with pre-filled fields
+  document.getElementById('extracted-results').style.display = 'none';
+  setMode('manual');
+  // Scroll to manual form
+  document.getElementById('mode-manual').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  showToast('✓ Form pre-filled — review and submit');
+}
+
+function toggleExtracted(i) {
+  const chk = document.getElementById(`chk-${i}`);
+  const item = document.getElementById(`ext-${i}`);
+  const checked = chk.classList.toggle('checked');
+  chk.textContent = checked ? '✓' : '';
+  item.classList.toggle('confirmed', checked);
+  item.classList.toggle('rejected', !checked);
+}
+
+// submitExtracted replaced by useExtractedInForm + submitManual flow
+
+// ── Manual submit ──────────────────────────────────────────────────────────────
+function submitManual() {
+  const org      = document.getElementById('org').value;
+  const name     = document.getElementById('reporter-name').value.trim();
+  const date     = document.getElementById('activity-date').value;
+  const co       = document.getElementById('company-name').value.trim();
+  const contact  = document.getElementById('contact-name').value.trim();
+  const desc     = document.getElementById('description').value.trim();
+  const cats     = getSelectedCats();
+  const industry = document.getElementById('industry').value;
+  const region   = document.getElementById('region').value;
+  const newBiz   = document.getElementById('new-biz').value;
+  const innovBiz = document.getElementById('innovation-biz').value;
+  const quarter  = deriveQuarter(date);
+  const hubFunded = document.getElementById('hub-funded').value;
+
+  // Validation
+  if (!org)     { showToast('⚠️ Please select your organization'); return; }
+  if (!name)    { showToast('⚠️ Please enter your name'); return; }
+  if (!date)    { showToast('⚠️ Please select a date'); return; }
+  if (!contact) { showToast('⚠️ Please enter the client name'); return; }
+  if (!co)      { showToast('⚠️ Please enter the business name'); return; }
+  if (!region)  { showToast('⚠️ Please select a region'); return; }
+  if (!industry){ showToast('⚠️ Please select an industry'); return; }
+  if (industry === 'Other' && !document.getElementById('industry-other').value.trim()) {
+    showToast('⚠️ Please specify the industry'); return;
+  }
+  if (!desc)    { showToast('⚠️ Please add a brief description'); return; }
+  if (cats.length === 0) { showToast('⚠️ Please select at least one activity type'); return; }
+  if (cats.includes('Technical Assistance')) {
+    const taTypes = getSelectedTA();
+    if (taTypes.length === 0) { showToast('⚠️ Please select at least one TA type'); return; }
+    const taHours = document.getElementById('ta-hours').value;
+    if (!taHours) { showToast('⚠️ Please enter hours of TA delivered'); return; }
+  }
+  if (cats.includes('Navigation')) {
+    const refTo = document.getElementById('referral-to').value;
+    if (!refTo) { showToast('⚠️ Please select who you referred this person to'); return; }
+    if (refTo === 'Other' && !document.getElementById('referral-other-text').value.trim()) {
+      showToast('⚠️ Please specify the organization'); return;
+    }
+  }
+
+  const industryFinal = industry === 'Other'
+    ? ('Other: ' + document.getElementById('industry-other').value.trim())
+    : industry;
+
+  const taTypes = cats.includes('Technical Assistance') ? getSelectedTA() : [];
+  const taHours = cats.includes('Technical Assistance') ? (document.getElementById('ta-hours').value || 0) : 0;
+  const referralToRaw = cats.includes('Navigation') ? document.getElementById('referral-to').value : '';
+  const referralTo = referralToRaw === 'Other'
+    ? ('Other: ' + (document.getElementById('referral-other-text').value.trim()))
+    : referralToRaw;
+
+  const entry = {
+    id: Date.now(),
+    date,
+    quarter,
+    org,
+    reporter: name,
+    clientName: contact,
+    company: co,
+    contactEmail: document.getElementById('contact-email').value.trim(),
+    region,
+    industry: industryFinal,
+    innovationBiz: innovBiz,
+    newBusiness: newBiz,
+    categories: cats,
+    taTypes,
+    taHours: parseFloat(taHours) || 0,
+    referralTo,
+    description: desc,
+    hubFunded,
+    source: 'manual'
+  };
+
+  activities.unshift(entry);
+  save();
+  resetManualForm();
+  showToast('✓ Activity logged!');
+
+  if (APPS_SCRIPT_URL && !APPS_SCRIPT_URL.includes("YOUR_APPS_SCRIPT")) {
+    fetch(APPS_SCRIPT_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "log_activity", data: entry })
+    }).catch(() => {});
+  }
+}
+
+function resetManualForm() {
+  ['company-name','contact-name','contact-email','description',
+   'referral-to','ta-other-text','ta-hours','industry-other'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.getElementById('industry').value = '';
+  document.getElementById('region').value = '';
+  document.getElementById('new-biz').value = '';
+  document.getElementById('innovation-biz').value = '';
+  document.getElementById('hub-funded').value = 'Yes';
+  document.getElementById('activity-date').value = new Date().toISOString().split('T')[0];
+  document.querySelectorAll('.cat-pill').forEach(el => el.classList.remove('selected'));
+  document.querySelectorAll('#ta-grid input[type=checkbox]').forEach(cb => cb.checked = false);
+  document.getElementById('nav-sub').style.display = 'none';
+  document.getElementById('referral-other-wrap').style.display = 'none';
+  const refSel = document.getElementById('referral-to');
+  if (refSel) refSel.value = '';
+  const refOther = document.getElementById('referral-other-text');
+  if (refOther) refOther.value = '';
+  document.getElementById('ta-sub').style.display = 'none';
+  document.getElementById('industry-other-wrap').style.display = 'none';
+  document.getElementById('ta-other-wrap').style.display = 'none';
+}
+
+// ── Render log ─────────────────────────────────────────────────────────────────
+function renderLog() {
+  const body = document.getElementById('log-body');
+  const empty = document.getElementById('log-empty');
+  const tableWrap = document.getElementById('log-table-wrap');
+  const count = document.getElementById('log-count');
+
+  count.textContent = `${activities.length} entr${activities.length === 1 ? 'y' : 'ies'}`;
+
+  if (activities.length === 0) {
+    empty.style.display = 'block';
+    tableWrap.style.display = 'none';
+    return;
+  }
+  empty.style.display = 'none';
+  tableWrap.style.display = 'block';
+
+  body.innerHTML = activities.map(a => {
+    const tags = (a.categories || []).map(c =>
+      `<span class="tag ${CAT_TAGS[c] || 'tag-nav'}">${c}</span>`
+    ).join(' ');
+    const newBizIcon = a.newBusiness === 'Yes' ? '🆕 Yes' : a.newBusiness === 'No' ? 'No' : '?';
+    const hubIcon    = a.hubFunded === 'Yes' ? '✅' : a.hubFunded === 'No' ? 'No' : '?';
+    const taList     = (a.taTypes || []).join(', ') || '—';
+    const taHrs      = a.taHours > 0 ? a.taHours : '—';
+    const refTo      = a.referralTo || '—';
+    return `<tr>
+      <td style="white-space:nowrap">${a.date || ''}</td>
+      <td style="font-weight:500;font-size:11px">${a.quarter || ''}</td>
+      <td style="font-weight:500">${a.org || ''}</td>
+      <td>${a.clientName || a.contact || ''}<br><span style="font-size:10px;color:var(--muted)">${a.contactEmail || ''}</span></td>
+      <td style="font-weight:600">${a.company || ''}</td>
+      <td style="font-size:11px">${(a.region || '').replace(/\s*[\(\[].*[\)\]]/g,'').trim()}</td>
+      <td style="font-size:11px">${a.industry || ''}</td>
+      <td style="font-size:11px;text-align:center">${newBizIcon}</td>
+      <td>${tags}</td>
+      <td style="font-size:10px;max-width:130px;color:var(--muted)">${taList}</td>
+      <td style="text-align:center">${taHrs}</td>
+      <td style="font-size:11px">${refTo}</td>
+      <td style="text-align:center;font-size:11px">${hubIcon}</td>
+      <td style="font-size:11px;max-width:160px;color:var(--muted)">${a.description || ''}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ── Export CSV ─────────────────────────────────────────────────────────────────
+function clearLog() {
+  if (!confirm('Clear all entries from this device? This cannot be undone. (Entries already synced to Google Sheets are not affected.)')) return;
+  activities = [];
+  save();
+  showToast('✓ Log cleared');
+}
+
+function exportCSV() {
+  if (activities.length === 0) { showToast('No activities to export yet'); return; }
+  const headers = ['Date','Quarter','Organization','Reporter','Client Name','Business Name','Contact Email','Region','Industry','Innovation Biz?','New Business?','Support Types','TA Types','TA Hours','Referred To','Description','Hub Funded','Source'];
+  const rows = activities.map(a => [
+    a.date, a.quarter, a.org, a.reporter,
+    a.clientName || a.contact, a.company, a.contactEmail,
+    a.region, a.industry, a.innovationBiz, a.newBusiness,
+    (a.categories || []).join('; '),
+    (a.taTypes || []).join('; '),
+    a.taHours || '',
+    a.referralTo || '',
+    a.description,
+    a.hubFunded, a.source
+  ].map(v => `"${(String(v||'')).replace(/"/g,'""')}"`));
+
+  const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `ERN_Activities_${new Date().toISOString().split('T')[0]}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('✓ CSV exported!');
+}
+
+// ── Persist ────────────────────────────────────────────────────────────────────
+function save() {
+  localStorage.setItem('ern_activities', JSON.stringify(activities));
+  renderLog();
+}
+
+// ── Toast ──────────────────────────────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+</script>
+</body>
+</html>
