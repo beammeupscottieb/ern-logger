@@ -695,11 +695,14 @@ function submitManual() {
   showSuccess(displayName, displayCo);
 
   if (APPS_SCRIPT_URL && !APPS_SCRIPT_URL.includes("YOUR_APPS_SCRIPT")) {
-    fetch(APPS_SCRIPT_URL, {
-      method: "POST",
-      headers: { "Content-Type": "text/plain" },
-      body: JSON.stringify({ action: "log_activity", token: SUBMISSION_TOKEN, data: entry })
-    }).catch(() => {});
+    const params = new URLSearchParams();
+    params.append("action", "log_activity");
+    params.append("token", SUBMISSION_TOKEN);
+    params.append("data", JSON.stringify(entry));
+    fetch(APPS_SCRIPT_URL, { method: "POST", body: params })
+      .then(r => r.text())
+      .then(t => console.log("Apps Script response:", t))
+      .catch(err => console.error("Submission error:", err));
   }
 }
 
