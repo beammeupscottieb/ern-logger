@@ -197,6 +197,42 @@
   }
   .toast.show { transform: translateX(-50%) translateY(0); }
 
+  /* ── Success state ── */
+  .success-wrap {
+    display: none;
+    text-align: center;
+    padding: 60px 24px 80px;
+  }
+  .success-icon {
+    width: 72px; height: 72px;
+    background: var(--green-l);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 24px;
+    font-size: 36px;
+  }
+  .success-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 28px; color: var(--navy);
+    margin-bottom: 10px;
+  }
+  .success-sub {
+    font-size: 15px; color: var(--muted);
+    margin-bottom: 32px;
+    line-height: 1.5;
+  }
+  .success-sub strong { color: var(--text); }
+  .btn-another {
+    display: inline-block;
+    padding: 14px 32px;
+    background: var(--orange);
+    color: white; border: none; border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px; font-weight: 600;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .btn-another:hover { background: #b54808; transform: translateY(-1px); }
+
   .helper-text { font-size: 11px; color: var(--muted); margin-top: 4px; }
 
   /* ── Sub-sections (TA, Nav) ── */
@@ -502,12 +538,20 @@
     <button class="btn-submit" onclick="submitManual()">Log This Activity →</button>
 </div>
 
+<div class="success-wrap" id="success-wrap">
+  <div class="success-icon">✓</div>
+  <div class="success-title">Activity Logged!</div>
+  <div class="success-sub" id="success-sub"></div>
+  <button class="btn-another" onclick="logAnother()">Log Another Activity</button>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
 // ── CONFIGURATION ──────────────────────────────────────────────────────────────
 // After deploying your Apps Script, paste the Web App URL here:
-const APPS_SCRIPT_URL = "script.google.com/macros/s/AKfycbwcKhqSjcD6BjIS-6uvz1cpd3e9SkW2ZTOS2pNppT0ccS46zL9oEZz5XNyewdtnCUYW/exec";
+
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwcKhqSjcD6BjIS-6uvz1cpd3e9SkW2ZTOS2pNppT0ccS46zL9oEZz5XNyewdtnCUYW/exec";
 // Shared secret. Must match SUBMISSION_TOKEN in the Apps Script.
 // To generate a new one, run in a terminal:
 //   python3 -c "import secrets; print(secrets.token_urlsafe(32))"
@@ -645,8 +689,10 @@ function submitManual() {
 
   activities.unshift(entry);
   save();
+  const displayName = entry.clientName || entry.company || "this client";
+  const displayCo   = entry.company   || "";
   resetManualForm();
-  showToast('✓ Activity logged!');
+  showSuccess(displayName, displayCo);
 
   if (APPS_SCRIPT_URL && !APPS_SCRIPT_URL.includes("YOUR_APPS_SCRIPT")) {
     fetch(APPS_SCRIPT_URL, {
@@ -688,6 +734,22 @@ function resetManualForm() {
 
 
 
+
+// ── Success / Log Another ──────────────────────────────────────────────────────
+function showSuccess(clientName, company) {
+  const sub = document.getElementById('success-sub');
+  sub.innerHTML = company
+    ? 'Activity for <strong>' + clientName + '</strong> at <strong>' + company + '</strong> has been recorded.'
+    : 'Activity for <strong>' + clientName + '</strong> has been recorded.';
+  document.querySelector('.container').style.display = 'none';
+  document.getElementById('success-wrap').style.display = 'block';
+  window.scrollTo(0, 0);
+}
+
+function logAnother() {
+  document.getElementById('success-wrap').style.display = 'none';
+  document.querySelector('.container').style.display = 'block';
+}
 
 // ── Persist ────────────────────────────────────────────────────────────────────
 function save() {
