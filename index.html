@@ -697,7 +697,7 @@ function submitManual() {
   if (APPS_SCRIPT_URL && !APPS_SCRIPT_URL.includes("YOUR_APPS_SCRIPT")) {
     fetch(APPS_SCRIPT_URL, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "text/plain" },
       body: JSON.stringify({ action: "log_activity", token: SUBMISSION_TOKEN, data: entry })
     }).catch(() => {});
   }
