@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ERN Activity Logger – Central Oregon Innovation Hub</title>
+<title>ERN Activity Tracker – Central Oregon Innovation Hub</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -52,13 +52,13 @@
     gap: 12px;
   }
   .logo-mark {
-    width: 36px; height: 36px;
-    background: var(--orange);
+    width: 44px; height: 44px;
+    background: white;
     border-radius: 8px;
     display: flex; align-items: center; justify-content: center;
-    font-family: 'DM Serif Display', serif;
-    font-size: 18px; color: white; font-weight: 700;
+    padding: 4px;
   }
+  .logo-mark img { max-width: 100%; max-height: 100%; display: block; }
   .logo-text {
     font-size: 15px; font-weight: 600; color: white; letter-spacing: 0.01em;
   }
@@ -112,69 +112,6 @@
     width: 3px; height: 14px;
     background: var(--orange);
     border-radius: 2px;
-  }
-
-  /* ── Upload zone ── */
-  .upload-icon { font-size: 36px; margin-bottom: 12px; }
-  .upload-title { font-weight: 600; font-size: 15px; color: var(--navy); margin-bottom: 6px; }
-  .upload-hint { font-size: 12px; color: var(--muted); }
-
-  .preview-wrap {
-    position: relative; margin-top: 16px;
-    border-radius: 8px; overflow: hidden;
-    border: 1px solid var(--border);
-  }
-  .preview-wrap img { width: 100%; display: block; max-height: 280px; object-fit: cover; }
-  .preview-remove {
-    position: absolute; top: 8px; right: 8px;
-    background: rgba(0,0,0,0.6); color: white;
-    border: none; border-radius: 6px;
-    width: 28px; height: 28px; cursor: pointer;
-    font-size: 16px; display: flex; align-items: center; justify-content: center;
-  }
-
-  /* ── AI Extract button ── */
-  .btn-ai {
-    width: 100%; margin-top: 16px;
-    padding: 14px;
-    background: linear-gradient(135deg, var(--blue) 0%, #1a4a8a 100%);
-    color: white; border: none; border-radius: 8px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px; font-weight: 600;
-    cursor: pointer; transition: all 0.2s;
-    display: flex; align-items: center; justify-content: center; gap: 8px;
-  }
-  .btn-ai:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(37,99,168,0.35); }
-  .btn-ai:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-
-  /* ── Extracted results ── */
-  .extracted-list { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
-  .extracted-item {
-    background: var(--sky);
-    border: 1px solid var(--border);
-    border-left: 4px solid var(--blue);
-    border-radius: 8px;
-    padding: 14px 16px;
-    display: flex; align-items: flex-start; gap: 12px;
-  }
-  .extracted-item.confirmed { border-left-color: var(--green); background: var(--green-l); }
-  .extracted-item.rejected { opacity: 0.4; }
-  .extracted-check {
-    width: 20px; height: 20px; min-width: 20px;
-    border-radius: 4px; border: 2px solid var(--blue);
-    cursor: pointer; display: flex; align-items: center; justify-content: center;
-    font-size: 12px; transition: all 0.15s; margin-top: 2px;
-  }
-  .extracted-check.checked { background: var(--green); border-color: var(--green); color: white; }
-  .extracted-content { flex: 1; }
-  .extracted-meeting { font-weight: 600; font-size: 14px; color: var(--navy); }
-  .extracted-meta { font-size: 12px; color: var(--muted); margin-top: 3px; }
-  .extracted-cat {
-    display: inline-block; margin-top: 6px;
-    background: var(--blue); color: white;
-    font-size: 11px; font-weight: 600;
-    padding: 2px 8px; border-radius: 20px;
-    letter-spacing: 0.04em;
   }
 
   /* ── Form fields ── */
@@ -248,55 +185,6 @@
   }
   .btn-submit:hover { background: #b54808; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(212,88,10,0.35); }
 
-  /* ── Log table ── */
-  .log-header {
-    display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 16px;
-  }
-  .log-count {
-    background: var(--navy); color: white;
-    font-size: 12px; font-weight: 600;
-    padding: 4px 12px; border-radius: 20px;
-  }
-  .btn-export {
-    padding: 8px 16px;
-    background: var(--green);
-    color: white; border: none; border-radius: 8px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 12px; font-weight: 600;
-    cursor: pointer; transition: all 0.15s;
-  }
-  .btn-export:hover { background: #235a40; }
-
-  .log-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-  .log-table th {
-    background: var(--navy); color: white;
-    padding: 10px 12px; text-align: left;
-    font-weight: 600; font-size: 11px;
-    letter-spacing: 0.05em; text-transform: uppercase;
-  }
-  .log-table th:first-child { border-radius: 8px 0 0 0; }
-  .log-table th:last-child { border-radius: 0 8px 0 0; }
-  .log-table td {
-    padding: 10px 12px;
-    border-bottom: 1px solid var(--border);
-    vertical-align: top;
-    color: var(--text);
-  }
-  .log-table tr:nth-child(even) td { background: var(--slate); }
-  .log-table tr:last-child td:first-child { border-radius: 0 0 0 8px; }
-  .log-table tr:last-child td:last-child { border-radius: 0 0 8px 0; }
-  .tag {
-    display: inline-block; padding: 2px 8px;
-    border-radius: 20px; font-size: 10px; font-weight: 600;
-    letter-spacing: 0.04em;
-  }
-  .tag-nav    { background: #dbeafe; color: #1e40af; }
-  .tag-ta     { background: #fef3c7; color: #92400e; }
-  .tag-capital{ background: var(--green-l); color: var(--green); }
-  .tag-network{ background: var(--orange-l); color: var(--orange); }
-  .tag-skills { background: #f3e8ff; color: #6b21a8; }
-
   /* ── Toast ── */
   .toast {
     position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px);
@@ -309,30 +197,7 @@
   }
   .toast.show { transform: translateX(-50%) translateY(0); }
 
-  /* ── Loading spinner ── */
-  .spinner {
-    width: 18px; height: 18px;
-    border: 2px solid rgba(255,255,255,0.3);
-    border-top-color: white;
-    border-radius: 50%;
-    animation: spin 0.7s linear infinite;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  /* ── Empty state ── */
-  .empty-state {
-    text-align: center; padding: 40px 20px;
-    color: var(--muted);
-  }
-  .empty-state svg { width: 48px; height: 48px; opacity: 0.3; margin-bottom: 12px; }
-  .empty-state p { font-size: 14px; }
-
-  .section-divider {
-    height: 1px; background: var(--border);
-    margin: 24px 0;
-  }
   .helper-text { font-size: 11px; color: var(--muted); margin-top: 4px; }
-
 
   /* ── Sub-sections (TA, Nav) ── */
   .sub-section {
@@ -373,9 +238,9 @@
 
 <header>
   <div class="logo">
-    <div class="logo-mark">E</div>
+    <div class="logo-mark"><img src="data:image/png;base64,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" alt="Central Oregon Innovation Hub"></div>
     <div>
-      <div class="logo-text">ERN Activity Logger</div>
+      <div class="logo-text">ERN Activity Tracker</div>
       <div class="logo-sub">Central Oregon Innovation Hub</div>
     </div>
   </div>
@@ -385,7 +250,6 @@
 <div class="container">
   <div class="page-title">Log an Activity</div>
   <div class="page-sub">Record every entrepreneur interaction for Business Oregon reporting. Takes 60 seconds.</div>
-  <!-- MANUAL MODE -->
   <!-- CARD 1: Reporter -->
     <div class="card">
       <div class="card-title">Your Info</div>
@@ -585,6 +449,33 @@
           </div>
         </div>
       </div>
+
+      <!-- Networking Event sub-fields -->
+      <div id="network-sub" style="display:none;margin-top:18px;">
+        <div class="sub-section">
+          <div class="sub-section-label">🤝 Networking Event Details</div>
+          <div class="form-grid">
+            <div class="field">
+              <label>Event Name <span class="req">*</span></label>
+              <input type="text" id="event-name" placeholder="e.g. Bend Founders Mixer Q2">
+            </div>
+            <div class="field">
+              <label>Total Attendance <span class="req">*</span></label>
+              <input type="number" id="event-attendance" min="1" step="1" placeholder="e.g. 42">
+              <div class="helper-text">Total head count for this event. Counted toward Business Oregon networking attendance metric.</div>
+            </div>
+            <div class="field">
+              <label>Event Format</label>
+              <select id="event-format">
+                <option value="">Select format...</option>
+                <option value="In-person">In-person</option>
+                <option value="Virtual">Virtual</option>
+                <option value="Hybrid">Hybrid</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- CARD 4: Details -->
@@ -597,18 +488,18 @@
           <div class="helper-text">One or two sentences. This is your audit trail with Business Oregon.</div>
         </div>
         <div class="field">
-          <label>Hub-Funded Activity?</label>
+          <label>Hub-Funded Activity? <span class="req">*</span></label>
           <select id="hub-funded">
+            <option value="">Select...</option>
             <option value="Yes">Yes – Hub funded this activity</option>
             <option value="No">No – Partner-funded / no Hub funds</option>
           </select>
-          <div class="helper-text">Hub-funded activities count toward your hard targets. Partner-funded are tracked separately.</div>
+          <div class="helper-text">Required. Hub-funded activities count toward your contract targets. Partner-funded are tracked separately.</div>
         </div>
       </div>
     </div>
 
     <button class="btn-submit" onclick="submitManual()">Log This Activity →</button>
-  </div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -617,37 +508,22 @@
 // ── CONFIGURATION ──────────────────────────────────────────────────────────────
 // After deploying your Apps Script, paste the Web App URL here:
 const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxpdqNnXJByBEPcvXwQR7bUXfJEsRKmYGpTtmR4BE8WPF4zBehGGwm_0aoKu0q7tfLS9g/exec";
+// Shared secret. Must match SUBMISSION_TOKEN in the Apps Script.
+// To generate a new one, run in a terminal:
+//   python3 -c "import secrets; print(secrets.token_urlsafe(32))"
+const SUBMISSION_TOKEN = "EgbF3BrjvbJPVYF3o-d5TA-pqWde_pcUfyXOvPU170U";
 
 // ── State ──────────────────────────────────────────────────────────────────────
 let activities = JSON.parse(localStorage.getItem('ern_activities') || '[]');
-let extractedItems = [];
-
-const CAT_TAGS = {
-  'Navigation':        'tag-nav',
-  'Technical Assistance': 'tag-ta',
-  'Access to Capital': 'tag-capital',
-  'Networking Event':  'tag-network',
-  'Skills Development':'tag-skills',
-  'Mentoring':         'tag-skills',
-};
 
 // ── Init ───────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('activity-date').value = new Date().toISOString().split('T')[0];
 });
 
-// ── Mode switch ────────────────────────────────────────────────────────────────
-
 // ── Category pills ─────────────────────────────────────────────────────────────
-function deriveQuarter(dateStr) {
-  if (!dateStr) return '';
-  const month = parseInt(dateStr.split('-')[1], 10);
-  const year  = dateStr.split('-')[0];
-  if (month <= 3)  return `Q1 ${year}`;
-  if (month <= 6)  return `Q2 ${year}`;
-  if (month <= 9)  return `Q3 ${year}`;
-  return `Q4 ${year}`;
-}
+// Quarter is computed server-side in the Apps Script using Rita's
+// fiscal calendar (Jul-Jun). Removed from the client to avoid confusion.
 
 function toggleCat(el) {
   el.classList.toggle('selected');
@@ -658,6 +534,9 @@ function toggleCat(el) {
   }
   if (cat === 'Technical Assistance') {
     document.getElementById('ta-sub').style.display = el.classList.contains('selected') ? 'block' : 'none';
+  }
+  if (cat === 'Networking event') {
+    document.getElementById('network-sub').style.display = el.classList.contains('selected') ? 'block' : 'none';
   }
 }
 function getSelectedCats() {
@@ -699,7 +578,6 @@ function submitManual() {
   const newBiz   = document.getElementById('new-biz').value;
   const desc     = document.getElementById('description').value.trim();
   const hubFunded= document.getElementById('hub-funded').value;
-  const quarter  = deriveQuarter(date);
   const cats     = getSelectedCats();
 
   if (!org)          { showToast('⚠️ Please select your organization'); return; }
@@ -708,6 +586,7 @@ function submitManual() {
   if (!contact)      { showToast('⚠️ Please enter the client name'); return; }
   if (!co)           { showToast('⚠️ Please enter the business name'); return; }
   if (cats.length === 0) { showToast('⚠️ Please select at least one support type'); return; }
+  if (!hubFunded)    { showToast('⚠️ Please indicate whether this activity is Hub-funded'); return; }
 
   if (cats.includes('Navigation')) {
     const refTo = document.getElementById('referral-to').value;
@@ -715,6 +594,13 @@ function submitManual() {
     if (refTo === 'Other' && !document.getElementById('referral-other-text').value.trim()) {
       showToast('⚠️ Please specify the organization'); return;
     }
+  }
+
+  if (cats.includes('Networking event')) {
+    const evName = document.getElementById('event-name').value.trim();
+    const evAtt  = document.getElementById('event-attendance').value;
+    if (!evName) { showToast('⚠️ Please enter the event name'); return; }
+    if (!evAtt || parseInt(evAtt, 10) < 1) { showToast('⚠️ Please enter total attendance for the event'); return; }
   }
 
   const industryFinal = industry === 'Other'
@@ -728,10 +614,14 @@ function submitManual() {
     ? ('Other: ' + (document.getElementById('referral-other-text').value.trim()))
     : referralToRaw;
 
+  const isNetworking = cats.includes('Networking event');
+  const eventName       = isNetworking ? document.getElementById('event-name').value.trim() : '';
+  const eventAttendance = isNetworking ? (parseInt(document.getElementById('event-attendance').value, 10) || 0) : 0;
+  const eventFormat     = isNetworking ? document.getElementById('event-format').value : '';
+
   const entry = {
     id: Date.now(),
     date,
-    quarter,
     org,
     reporter: name,
     clientName: contact,
@@ -745,6 +635,9 @@ function submitManual() {
     taTypes,
     taHours: parseFloat(taHours) || 0,
     referralTo,
+    eventName,
+    eventAttendance,
+    eventFormat,
     description: desc,
     hubFunded,
     source: 'manual'
@@ -759,14 +652,15 @@ function submitManual() {
     fetch(APPS_SCRIPT_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ action: "log_activity", data: entry })
+      body: JSON.stringify({ action: "log_activity", token: SUBMISSION_TOKEN, data: entry })
     }).catch(() => {});
   }
 }
 
 function resetManualForm() {
   ['company-name','contact-name','contact-email','description',
-   'referral-to','ta-other-text','ta-hours','industry-other'].forEach(id => {
+   'referral-to','ta-other-text','ta-hours','industry-other',
+   'event-name','event-attendance'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.value = '';
   });
@@ -774,7 +668,7 @@ function resetManualForm() {
   document.getElementById('region').value = '';
   document.getElementById('new-biz').value = '';
   document.getElementById('innovation-biz').value = '';
-  document.getElementById('hub-funded').value = 'Yes';
+  document.getElementById('hub-funded').value = '';
   document.getElementById('activity-date').value = new Date().toISOString().split('T')[0];
   document.querySelectorAll('.cat-pill').forEach(el => el.classList.remove('selected'));
   document.querySelectorAll('#ta-grid input[type=checkbox]').forEach(cb => cb.checked = false);
@@ -787,6 +681,9 @@ function resetManualForm() {
   document.getElementById('ta-sub').style.display = 'none';
   document.getElementById('industry-other-wrap').style.display = 'none';
   document.getElementById('ta-other-wrap').style.display = 'none';
+  document.getElementById('network-sub').style.display = 'none';
+  const evFmt = document.getElementById('event-format');
+  if (evFmt) evFmt.value = '';
 }
 
 
